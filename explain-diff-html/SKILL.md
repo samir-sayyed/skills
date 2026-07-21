@@ -1,6 +1,6 @@
 ---
 name: explain-diff-html
-description: Use when the user asks for a rich explanation of a code change, diff, branch, or PR. Produces a self-contained interactive HTML page with background, intuition, code walkthrough, and a quiz.
+description: Produces a self-contained interactive HTML page explaining a code change — background, intuition, code walkthrough, diagrams, and a quiz. Use whenever the user wants to understand or teach a diff, commit, branch, PR, or recent change — "explain this PR", "walk me through this diff", "what changed here", "help me/my teammate understand this change", "make a writeup of this commit" — even if they don't ask for HTML explicitly.
 ---
 
 # Explain Diff
@@ -9,12 +9,27 @@ description: Use when the user asks for a rich explanation of a code change, dif
 
 Please make me a rich, interactive explanation of the specified code change.
 
+## Getting the change
+
+First pin down exactly what diff you're explaining, then read it in full:
+
+- Uncommitted work: `git diff` (plus `git diff --staged`).
+- A branch: `git diff <base>...<branch>` — use three dots so you only see the branch's own changes, and `git log <base>..<branch> --oneline` for the commit story.
+- A PR: `gh pr diff <number>` and `gh pr view <number>` (title and description often explain the *why* — use it).
+- A commit or range: `git show <sha>` / `git diff <a>..<b>`.
+
+If the user is vague ("explain my recent changes"), infer the most likely diff from git status/log and say which one you picked. Don't just read the diff — explore the surrounding unchanged code too; the Background section depends on it.
+
+## Sections
+
 It should have these sections:
 
 - Background: Explain the existing system relevant to this change. (You should broadly explore surrounding code for this.) We don't know how much the reader already knows, so include a deep background for beginners (note that it can be skipped if the reader is already familiar), and then a more narrow background directly relevant to the change.
 - Intuition: Explain the core intuition for the code change. The focus here is to explain the essence, not the full details. Use concrete examples with toy data. Use figures and diagrams liberally.
 - Code: Do a high-level walkthrough of the changes to the code. Group/order the changes in an understandable way.
-- Quiz: Come up with five questions that test the reader's knowledge of this PR. This should be medium difficulty, difficult enough that you actually need to understand the substance of the PR to answer them, but not gotchas. The goal is to help the reader make sure that they've actually understood. These should be presented as interactive multiple-choice questions, and when the user clicks, it tells them whether they were correct and gives feedback.
+Scale the depth to the diff. A large multi-file change needs grouping by theme and ruthless prioritization of what matters (call out the 20% of the diff that carries the meaning; summarize mechanical churn like renames or generated files in a sentence). A tiny diff should produce a short page — don't pad Background or invent diagrams to fill a template.
+
+- Quiz: Come up with five questions (three is fine for a small diff) that test the reader's knowledge of this PR. This should be medium difficulty, difficult enough that you actually need to understand the substance of the PR to answer them, but not gotchas. The goal is to help the reader make sure that they've actually understood. These should be presented as interactive multiple-choice questions, and when the user clicks, it tells them whether they were correct and gives feedback.
 
 ## Quiz quality rules (important — the quiz is useless if the answer is guessable)
 
@@ -30,7 +45,7 @@ The correct answer must not be identifiable without reading the question. Enforc
 ## Format
 
 - Output a single self-contained HTML file which includes CSS and JavaScript — no external resources (no CDN scripts, fonts, or images), so it works offline. Make the whole thing one long page with section headers and a sticky/linked table of contents. Don't use tabs for the top-level structure. Basic responsive styling so you can view it on a phone is nice too.
-- Put the file in a global place on my computer outside of the code repo, and make sure the filename always starts with today's date in `YYYY-MM-DD-` format, because it helps keep the files time-sorted and out of version control. For example: `/tmp/2026-01-12-explanation-<slug>.html`. After saving, print the absolute path so I can open it.
+- Put the file in a global place on my computer outside of the code repo, and make sure the filename always starts with today's date in `YYYY-MM-DD-` format, because it helps keep the files time-sorted and out of version control. For example: `/tmp/2026-01-12-explanation-<slug>.html`. After saving, print the absolute path and open it in the browser (`open <path>` on macOS) so I can read it immediately.
 - Please write with the clarity and flow of Martin Kleppmann, making it engaging and written in classic style. Transitions between sections should be smooth.
 - Some tips on diagrams. Ideally, you should pick a small number of diagram families that can be reused throughout the explanation to explain various cases. Some useful kinds of diagrams:
   - A very simplified version of the UI that the user sees in the app, to explain UI changes.
@@ -40,3 +55,4 @@ The correct answer must not be identifiable without reading the question. Enforc
 - For code blocks, always use `<pre>` tags. If you use a custom styled div instead, it **must** have `white-space: pre-wrap` in its CSS, or the browser will collapse all newlines into a single line. Before saving the file, scan each code block in the HTML source and confirm its CSS includes `white-space: pre` or `pre-wrap`.
 - Use callouts for key concepts or definitions, important edge cases, etc.
 - Support dark mode via `@media (prefers-color-scheme: dark)` — at minimum, background, text, code blocks, and callouts must stay readable in both schemes.
+- Before declaring done, verify the inline JavaScript parses (e.g. extract each `<script>` body to a temp file and run `node --check` on it). A single syntax error kills the quiz and TOC silently — the page still looks fine at a glance.
