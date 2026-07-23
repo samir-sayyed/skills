@@ -8,6 +8,7 @@ Personal Claude Code skills. One directory per skill; each contains a `SKILL.md`
 |---|---|
 | [agent-swarm-economics](agent-swarm-economics/) | Multi-agent architecture & cost optimization, from Cursor's agent-swarm model-economics research. Two modes: ADVISE (design/debug/cost guidance for any multi-agent setup) and EXECUTE (actually runs the planner/worker split — plan with a strong model, delegate code-writing to cheap worker subagents; `planner=` / `worker=` overridable). |
 | [explain-diff-html](explain-diff-html/) | Rich, self-contained interactive HTML explanation of a code change (diff/branch/PR) — background, intuition, code walkthrough, and a quiz with bias fixes. Based on [Explain Diff](https://gist.github.com/geoffreylitt/a29df1b5f9865506e8952488eac3d524) by [Geoffrey Litt](https://github.com/geoffreylitt). |
+| [onboard-agent](onboard-agent/) | Builds a `<project>-product` briefing skill for any repo (Android, iOS, frontend, backend, CLI) — analyses the code, then grills you one question at a time about the tacit knowledge it cannot read: load-bearing flows, invariants and the bugs that proved them, entitlement exceptions, and a runbook for driving the app. Wires the result into `CLAUDE.md` so agents actually load it. Re-run with an argument to deepen one section. |
 
 ## Installing a skill
 
