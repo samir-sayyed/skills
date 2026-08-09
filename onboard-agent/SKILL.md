@@ -72,13 +72,17 @@ Name it for the project: `quiet-hours-product`, `acme-api-product`.
 
 Every line earns its place by being something the code cannot say. Module maps, class lists, and data models are already in the source and rot the day after generation; the briefing holds the why, the rule, the exception, and the path to reach it.
 
-**Done when:** every claim carries an anchor, and every axis has a section.
+Before writing a claim, read the code at its anchor. A well-commented codebase already carries the *why* at the site, and repeating it pays context to say nothing. What the comment cannot carry is what survives: the production consequence (*what users saw when this broke*), the instruction not to change it (*these two branches look like duplication; leave them apart*), and the judgement that the code has no room for (*this is deliberate, do not harden it*).
+
+**Done when:** every claim carries an anchor, every axis has a section, and no claim restates a comment already sitting at its anchor.
 
 ## 7. Wire the load path
 
 A briefing nothing loads is the problem you started with.
 
-Append a two-line pointer to `CLAUDE.md`, or `AGENTS.md` where the repo uses that. Place it **outside** any tool-owned block — markers like `<!-- cce-block -->` get rewritten and will swallow anything inside them.
+Put a two-line pointer at the **top** of `CLAUDE.md`, or `AGENTS.md` where the repo uses that — the first thing in the file, above any existing content. Agents orient by reading the start of these files, and a long one gets truncated before its end; a pointer appended at the bottom is the same unread footnote you set out to fix.
+
+Place it **outside** any tool-owned block — markers like `<!-- cce-block -->` get rewritten and will swallow anything inside them. A block that starts at line 1 is prepended to, not appended after.
 
 ```markdown
 ## Product context
